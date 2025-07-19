@@ -8,6 +8,9 @@ app.use("/hello", (req,res)=>{
 app.use("/", (req,res)=>{
     res.send("Dashboard")
 }) 
+app.use("/", (req,res)=>{
+    res.send("Dashboard")
+}) 
 
 app.use("/test", (req, res) => {
     res.send("Hello from the server");
