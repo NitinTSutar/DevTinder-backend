@@ -13,7 +13,7 @@ app.post("/signup", async (req, res) => {
         await user.save();
         res.send("User created successfully");
     } catch (err) {
-        res.status(400).send("user not created", err.message);
+        res.status(400).send("user not created" + err.message);
     }
 });
 
@@ -30,7 +30,7 @@ app.get("/user", async (req, res) => {
             res.send(users);
         }
     } catch (err) {
-        res.status(400).send("Something went wrong", err.message);
+        res.status(400).send("Something went wrong" + err.message);
     }
 });
 
@@ -44,7 +44,7 @@ app.get("/feed", async (req, res) => {
             res.send(users);
         }
     } catch (err) {
-        res.status(400).send("Something went wrong", err.message);
+        res.status(400).send("Something went wrong"+ err.message);
     }
 });
 
@@ -55,7 +55,7 @@ app.delete("/user", async (req, res) => {
         const user = await User.findByIdAndDelete({ _id: userId }); 
         res.send("User deleted Succesfully");
     } catch (err) {
-        res.status(400).send("Something went wrong");
+        res.status(400).send("Something went wrong" + err.message);
     }
 });
 
@@ -64,10 +64,10 @@ app.patch("/user", async (req, res) => {
     const userId = req.body.userId;
     const data = req.body;
     try{
-        const user = await User.findByIdAndUpdate({ _id : userId}, data);
+        const user = await User.findByIdAndUpdate({ _id : userId}, data, {runValidators: true});
         res.send("User Updated Succesfully");
     }catch{
-        res.status(400).send("Something went wrong");
+        res.status(400).send("Something went wrong" + err.message);
     }
 })
 
