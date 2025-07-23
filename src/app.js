@@ -5,6 +5,7 @@ const app = express();
 
 app.use(express.json());
 
+// Creating a User
 app.post("/signup", async (req, res) => {
     const user = new User(req.body);
 
@@ -16,15 +17,16 @@ app.post("/signup", async (req, res) => {
     }
 });
 
+// Find user by EmailID
 app.get("/user", async (req, res) => {
     const userEmail = req.body.email;
     try {
         const users = await User.find({
             email: userEmail,
         });
-        if(users.length === 0 ){
-            res.status(404).send("User not found")
-        }else{
+        if (users.length === 0) {
+            res.status(404).send("User not found");
+        } else {
             res.send(users);
         }
     } catch (err) {
@@ -32,16 +34,40 @@ app.get("/user", async (req, res) => {
     }
 });
 
-app.get("/feed", async (req, res) =>{
-    try{
-        const users = await User.find({})
-        if(users.length === 0 ){
-            res.status(404).send("User not found")
-        }else{
+// Feed / loading all the data
+app.get("/feed", async (req, res) => {
+    try {
+        const users = await User.find({});
+        if (users.length === 0) {
+            res.status(404).send("User not found");
+        } else {
             res.send(users);
         }
-    }catch (err){
+    } catch (err) {
         res.status(400).send("Something went wrong", err.message);
+    }
+});
+
+// Delete user by ID
+app.delete("/user", async (req, res) => {
+    const userId = req.body.userId;
+    try {
+        const user = await User.findByIdAndDelete({ _id: userId }); 
+        res.send("User deleted Succesfully");
+    } catch (err) {
+        res.status(400).send("Something went wrong");
+    }
+});
+
+// Update user by ID
+app.patch("/user", async (req, res) => {
+    const userId = req.body.userId;
+    const data = req.body;
+    try{
+        const user = await User.findByIdAndUpdate({ _id : userId}, data);
+        res.send("User Updated Succesfully");
+    }catch{
+        res.status(400).send("Something went wrong");
     }
 })
 
