@@ -3,8 +3,12 @@ const { connectDB } = require("./configs/database");
 const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 const User = require("./models/user");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middlewares/auth");
 const app = express();
 
+app.use(cookieParser());
 app.use(express.json());
 
 // Creating a User
@@ -44,12 +48,33 @@ app.post("/login", async (req, res) => {
 
         const validPassword = await bcrypt.compare(password, user.password);
         if (validPassword) {
+            // Create a JWT Token
+
+            const token = await jwt.sign(
+                { _id: user._id },
+                "NITIN@Sutar$2001"
+            );
+            res.cookie("token", token);
             res.send("Login Succesfull");
         } else {
             throw new Error("Invalid Credentials");
         }
     } catch (err) {
         res.status(404).send("ERROR: " + err);
+    }
+});
+
+// User Profile
+app.get("/profile", userAuth, async (req, res) => {
+    try {
+        const user = req.user;
+
+        if (!user) {
+            throw new Error("User does not exist");
+        }
+        res.send(user);
+    } catch (err) {
+        res.status(400).send("ERROR: " + err.message);
     }
 });
 
@@ -71,7 +96,7 @@ app.get("/user", async (req, res) => {
 });
 
 // Feed / loading all the data
-app.get("/feed", async (req, res) => {
+app.get("/feed", userAuth,  async (req, res) => {
     try {
         const users = await User.find({});
         if (users.length === 0) {
@@ -85,10 +110,10 @@ app.get("/feed", async (req, res) => {
 });
 
 // Delete user by ID
-app.delete("/user", async (req, res) => {
+app.delete("/user", userAuth,  async (req, res) => {
     const userId = req.body.userId;
     try {
-        const user = await User.findByIdAndDelete({ _id: userId });
+        const user = await User.findByIdAndDelete(userId);
         res.send("User deleted Succesfully");
     } catch (err) {
         res.status(400).send("Something went wrong" + err.message);
@@ -96,7 +121,7 @@ app.delete("/user", async (req, res) => {
 });
 
 // Update user by ID
-app.patch("/user/:userId", async (req, res) => {
+app.patch("/user/:userId", userAuth, async (req, res) => {
     const userId = req.params?.userId;
     const data = req.body;
     try {
@@ -120,7 +145,7 @@ app.patch("/user/:userId", async (req, res) => {
             throw new Error("Skills cannot be more than 10");
         }
 
-        const user = await User.findByIdAndUpdate({ _id: userId }, data, {
+        const user = await User.findByIdAndUpdate(userId, data, {
             runValidators: true,
         });
         res.send("User Updated Succesfully");
