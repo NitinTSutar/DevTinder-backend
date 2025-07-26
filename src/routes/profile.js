@@ -52,15 +52,11 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
         const bcrypt = require("bcrypt");
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = req.user;
-        user.password = hashedPassword;
+        const user = req.user.password;
+        user = hashedPassword;
         await user.save();
 
         res.send("password updated successfuly");
-        // res.json({
-        //     message: "$(User.firstName), Your Password Updated successfuly",
-        //     data: pass,
-        // });
     } catch (err) {
         res.status(400).send("ERROR: " + err.message);
     }
