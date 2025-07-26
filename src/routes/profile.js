@@ -4,7 +4,7 @@ const profileRouter = express.Router();
 const { validateEditProfileData } = require("../utils/validation");
 const validator = require("validator");
 const User = require("../models/user");
-
+const bcrypt = require("bcrypt");
 // User Profile
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
     try {
@@ -49,14 +49,15 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
         if (!validator.isStrongPassword(password)) {
             throw new Error("New password is not strong enough");
         }
-        const bcrypt = require("bcrypt");
+        
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = req.user.password;
-        user = hashedPassword;
-        await user.save();
+        
+        req.user.password = hashedPassword;
+        await req.user.save();
 
         res.send("password updated successfuly");
+       
     } catch (err) {
         res.status(400).send("ERROR: " + err.message);
     }
