@@ -34,7 +34,7 @@ requestRouter.post(
       if (existingConnectionRequest) {
         return res
           .status(400)
-          .send({ message: "Connection Request Already Exists!!" });
+          .json({ message: "Connection Request Already Exists!!" });
       }
 
       const connectionRequest = new ConnectionRequest({
@@ -50,7 +50,7 @@ requestRouter.post(
         data,
       });
     } catch (err) {
-      res.status(400).send("ERROR" + err.message);
+      res.status(400).json({ message: err.message });
     }
   }
 );
@@ -84,7 +84,7 @@ requestRouter.post(
 
       res.json({ message: "connection request: " + status, data });
     } catch (err) {
-      res.status(400).send("ERROR: " + err.message);
+      res.status(400).json({ message: err.message });
     }
   }
 );

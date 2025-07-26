@@ -23,9 +23,9 @@ authRouter.post("/signup", async (req, res) => {
         });
 
         await user.save();
-        res.send("User created successfully");
+        res.json({message: "User created successfully"});
     } catch (err) {
-        res.status(400).send("ERROR: " + err.message);
+        res.status(400).json({ message: err.message });
     }
 });
 
@@ -44,12 +44,12 @@ authRouter.post("/login", async (req, res) => {
             const token = await user.getJWT();
 
             res.cookie("token", token);
-            res.send("Login Succesfull");
+            res.json({message: "Login Succesfull"});
         } else {
             throw new Error("Invalid Credentials");
         }
     } catch (err) {
-        res.status(404).send("ERROR: " + err);
+        res.status(404).json({ message: err.message });
     }
 });
 
@@ -58,7 +58,7 @@ authRouter.post("/logout", async (req, res) => {
     res.cookie("token", null, {
         expires: new Date(Date.now()),
     });
-    res.send("Logout Succesful");
+    res.json({message: "Logout Succesful"});
 });
 
 module.exports = authRouter;
