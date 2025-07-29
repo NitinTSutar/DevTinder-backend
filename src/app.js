@@ -1,19 +1,20 @@
 const express = require("express");
 const { connectDB } = require("./configs/database");
-// const User = require("./models/user");
 const cookieParser = require("cookie-parser");
-// const { userAuth } = require("./middlewares/auth");
 const app = express();
-// const { validateSignUpData } = require("./utils/validation");
-// const jwt = require("jsonwebtoken");
+const cors = require("cors");
 
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
 app.use(cookieParser());
 app.use(express.json());
 
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
-const userRouter = require("./routes/user")
+const userRouter = require("./routes/user");
 
 app.use("/", authRouter);
 app.use("/", requestRouter);

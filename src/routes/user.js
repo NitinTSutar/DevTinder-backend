@@ -39,7 +39,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       .populate("toUserId", USER_SAFE_DATA);
 
     const data = connectionRequests.map((row) => {
-      if (row.fromUserId._id.toString() === loggedInUser._id.toString) {
+      if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
         return row.toUserId;
       }
       return row.fromUserId;
@@ -50,8 +50,8 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
-
-userRouter.get("/feed?page=1&limit=10", userAuth, async (req, res) => {
+// "/feed?page=1&limit=10"
+userRouter.get("/feed", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
 
